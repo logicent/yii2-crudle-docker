@@ -22,51 +22,37 @@ AppAsset::register($this);
 </head>
 <body>
     <?php $this->beginBody() ?>
-    <div class="wrap">
-        <?php
-            NavBar::begin([
-                'brandLabel' => 'My Company',
-                'brandUrl' => Yii::$app->homeUrl,
-                'options' => [
-                    'class' => 'navbar-inverse navbar-fixed-top',
-                ],
-            ]);
-            $menuItems = [
-                ['label' => 'Home', 'url' => ['/site/index']],
-            ];
-            if (Yii::$app->user->isGuest) {
-                $menuItems[] = ['label' => 'Signup', 'url' => ['/user/signup']];
-                $menuItems[] = ['label' => 'Login', 'url' => ['/user/login']];
-            } else {
-                $menuItems[] = [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
-                    'url' => ['/user/logout'],
-                    'linkOptions' => ['data-method' => 'post']
-                ];
-            }
-            echo Nav::widget([
-                'options' => ['class' => 'navbar-nav navbar-right'],
-                'items' => $menuItems,
-            ]);
-            NavBar::end();
-        ?>
 
-        <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= $content ?>
+    <header id="app_head">
+    <?php
+        echo $this->context->renderPartial( '/layouts/partials/_main_navbar', ['context' => $this->context] );
+        // if ($this->context->showViewHeader) :
+        echo $this->context->renderPartial( '/layouts/partials/_view_header', ['context' => $this->context] );
+        // endif ?>
+    </header>
+
+    <section id="app_body" class="ui basic segment">
+        <?php $this->context->renderPartial( '/layouts/partials/_flash_message', ['context' => $this->context] ) ?>
+        <div class="ui stackable grid">
+        <?php 
+            // if ( $this->context->showViewSidebar ) :
+            //     if ( file_exists( $this->context->viewPath . '_view_sidebar.php' ) ) :
+            //         echo $this->context->renderPartial( '_view_sidebar', ['context' => $this->context] );
+            //     else :
+            //         echo $this->context->renderPartial( '/layouts/partials/_view_sidebar', ['context' => $this->context] );
+            //     endif;
+            // endif ?>
+
+            <!-- <div id="content" class="<?= $this->context->showViewSidebar ? 'thirteen' : 'sixteen' ?> wide column"> -->
+            <div id="content" class="sixteen wide column">
+                <?= $content ?>
+            </div>
         </div>
-    </div>
+    </section>
+<?php 
+    $this->registerJs($this->render('main.js'));
 
-    <footer class="footer">
-        <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-        <p class="pull-right"><?= Yii::powered() ?></p>
-        </div>
-    </footer>
-
-    <?php $this->endBody() ?>
+    $this->endBody() ?>
 </body>
 </html>
 <?php $this->endPage() ?>

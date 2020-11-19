@@ -1,20 +1,44 @@
-Yii 2 Dockerized
-================
+Yii 2 Cradle
+============
 
-A template for docker based Yii 2 applications.
+A starter kit for enterprise web applications.
 
- * Ephemeral container, configured via environment variables
- * Application specific base image (Nginx + PHP-FPM)
- * Optional local configuration overrides for development/debugging (git-ignored)
- * Base scaffold code for login, signup and forgot-password actions
- * Flat configuration file structure
- * Optional cron integration for periodic jobs
+ * Using yii2-dockerized as a boilerplate
 
-> **Note:** The included example base image is now based on Alpine Linux and
-> uses [s6-overlay](https://github.com/just-containers/s6-overlay) to supervise
-> Nginx + PHP-FPM. You can of course change this to any setup you prefer.
-> You find the "old" setup based on Apache and mod_php in the "apache" branch.
-> Note though, that it's no longer maintained.
+> **Note:** Some tweaks are needed to get going for now. These are outlined below:
+
+# Update/Add Composer Packages
+If your app needs some additional composer packages besides yii2 or if you want to update composer packages, go to the ./builddirectory of the app:
+
+`cd <project root>/build`
+
+To add a package run:
+`docker run -it --rm -v `pwd`:/app composer require some/library`
+
+To update all packages run:
+`docker run -it --rm -v `pwd`:/app composer update`
+
+This will update composer.jsonand composer.lockrespectively. You can also run other composer commands, of course.
+
+You have to rebuild your base image afterwards (see below).
+
+`docker-compose build`
+
+# Initial Setup of a Development Environment
+
+`docker-compose up -d`
+
+First, you should find the uid and gid of the web service, for example:
+`docker-compose exec web id www-data`
+
+The output of this command would be something like this:
+`uid=82(www-data) gid=82(www-data) groups=82(www-data),82(www-data)`
+
+Then, you should use these uid and gid to set permissions on Docker host, which will be used by the container too. So, run the following command on the Docker host:
+`sudo chown -R uid:gid var/sessions`
+
+SSH in to a running container
+`docker exec -it <container name> /bin/ash`
 
 # 1 Main Concepts
 
