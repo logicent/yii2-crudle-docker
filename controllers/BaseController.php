@@ -10,8 +10,9 @@ use yii\filters\VerbFilter;
 
 class BaseController extends Controller
 {
-    public $showSideMenu = false;
     public $showBreadcrumb = true;
+    public $showViewHeader = true;
     public $showViewSidebar = true;
+    // public $showSideMenu = false;
 
 }

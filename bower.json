@@ -1,0 +1,24 @@
+{
+  "name": "yii2-cradle",
+  "authors": [
+    "Ken Mwai <mwaigichuhi@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "BSD-3",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor/bower-asset",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flatpickr": "flatpickr-calendar#^4.6.6",
+    "sweetalert": "^2.1.2",
+    "dirrty": "^0.2.0",
+    "fullcalendar": "^5.4.0"
+  }
+}

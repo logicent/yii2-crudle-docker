@@ -24,6 +24,7 @@ class SiteController extends BaseController
      */
     public function actionIndex()
     {
+        return $this->redirect('doc-type/index');
         return $this->render('index');
     }
 

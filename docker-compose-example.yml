@@ -25,6 +25,14 @@ services:
         ports:
             - "8080:80"
 
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 8888:8080
+        depends_on:
+            - db
+    
     db:
         image: mysql:5
         # ports:

@@ -1,0 +1,40 @@
+body {
+    font-family: "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    /* #eef0f6 #fff whitesmoke hsl(225,30,94) rgb(238,240,246) */
+    background-color: #eef0f6; 
+    /* override height: 100% in semantic-ui.css to remove scrollbar in short pages */
+    height: auto;
+}
+#app_head {
+    /* #ffffff #fff white hsl(0,0,100) rgb(255,255,255) */
+    background-color: #ffffff;
+    border-color: #ebeff2;
+    padding: 1em 0;
+}
+/* Alert / Notifications counters */
+/* #main_nav .ui.dropdown .menu > .item > .label {
+    float: right;
+    margin-top: -1.45em;
+    margin-right: 0;
+} */
+
+#view_head .ui.header {
+    font-weight: 500;
+}
+
+/* #header_wrapper {
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 801;
+} */
+
+/* #main_nav, #page_header {
+    position: relative;
+} */
+
+.ui.accordion .active.title .angle.right.icon, .ui.accordion .accordion .active.title .angle.right.icon {
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+}

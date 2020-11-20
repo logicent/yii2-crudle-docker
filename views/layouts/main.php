@@ -1,8 +1,6 @@
 <?php
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
+use \icms\FomanticUI\collections\Breadcrumb;
 use app\assets\AppAsset;
 
 /* @var \yii\web\View $this */
@@ -26,9 +24,9 @@ AppAsset::register($this);
     <header id="app_head">
     <?php
         echo $this->context->renderPartial( '/layouts/partials/_main_navbar', ['context' => $this->context] );
-        // if ($this->context->showViewHeader) :
-        echo $this->context->renderPartial( '/layouts/partials/_view_header', ['context' => $this->context] );
-        // endif ?>
+        if ($this->context->showViewHeader) :
+            echo $this->context->renderPartial( '/layouts/partials/_view_header', ['context' => $this->context] );
+        endif ?>
     </header>
 
     <section id="app_body" class="ui basic segment">
@@ -43,7 +41,7 @@ AppAsset::register($this);
             //     endif;
             // endif ?>
 
-            <!-- <div id="content" class="<?= $this->context->showViewSidebar ? 'thirteen' : 'sixteen' ?> wide column"> -->
+            <!-- <div id="content" class="<?php //= $this->context->showViewSidebar ? 'thirteen' : 'sixteen' ?> wide column"> -->
             <div id="content" class="sixteen wide column">
                 <?= $content ?>
             </div>

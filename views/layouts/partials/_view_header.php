@@ -19,11 +19,11 @@ use icms\FomanticUI\Elements;
             // \Kint::dump($this->context->action);
             if ( $this->context->action->id == 'index' && $this->context->id != 'setup' ) :
                 // echo Html::a(Yii::t('app', 'Refresh'), ['refresh'], ['class' => 'compact ui small button']);
-                if ( Yii::$app->user->can('New ' . Inflector::id2camel(
-                                                    Inflector::singularize($this->context->id)
-                                                ))) :
+                // if ( Yii::$app->user->can('New ' . Inflector::id2camel(
+                //                                     Inflector::singularize($this->context->id)
+                //                                 ))) :
                     echo Html::a( Yii::t('app', 'New'), ['create'], ['class' => 'compact ui small primary button'] );
-                endif;
+                // endif;
                 if ( Yii::$app->user->can('Delete ' . Inflector::id2camel(
                                                         Inflector::singularize($this->context->id)
                                                     ))) :
