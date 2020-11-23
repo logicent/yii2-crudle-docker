@@ -1,15 +1,12 @@
 <?php
+
 namespace app\models\forms;
 
 use Yii;
 use yii\base\InvalidParamException;
-use yii\base\Model;
 use app\models\User;
 
-/**
- * Password reset form
- */
-class ResetPasswordForm extends Model
+class ResetPasswordForm extends \yii\base\Model
 {
     public $password;
 
@@ -30,19 +27,13 @@ class ResetPasswordForm extends Model
         if (empty($token) || !is_string($token)) {
             throw new InvalidParamException('Password reset token cannot be blank.');
         }
-        $this->_user = User::find()
-            ->canLogin()
-            ->passwordResetToken($token)
-            ->one();
+        $this->_user = User::findByPasswordResetToken($token);
         if (!$this->_user) {
             throw new InvalidParamException('Wrong password reset token.');
         }
         parent::__construct($config);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
@@ -54,13 +45,14 @@ class ResetPasswordForm extends Model
     /**
      * Resets password.
      *
-     * @return bool whether password was reset.
+     * @return boolean if password was reset.
      */
     public function resetPassword()
     {
-        if (!$this->validate()) {
-            return false;
-        }
-        return $this->_user->resetPassword($this->password);
+        $user = $this->_user;
+        $user->setPassword($this->password);
+        $user->removePasswordResetToken();
+
+        return $user->save(false);
     }
 }

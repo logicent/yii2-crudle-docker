@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\Schema;
 
 /**
  * This is the model class for table "doc_type_field".
@@ -102,4 +103,91 @@ class DocTypeField extends \yii\db\ActiveRecord
             'width' => Yii::t('app', 'Width'),
         ];
     }
+
+    public static function getListOptions()
+    {
+        return [
+            'Attach',
+            'Attach Image',
+            'Barcode',
+            // 'Button',
+            'Check',
+            'Code',
+            'Color',
+            // 'Column Break',
+            'Currency',
+            // 'Data',
+            'Date',
+            'Datetime',
+            // 'Dynamic Link',
+            'Float',
+            // 'Fold',
+            'Geolocation',
+            'Heading',
+            'HTML',
+            // 'HTML Editor',
+            'Image',
+            'Int',
+            'Link',
+            'Long Text',
+            // 'Markdown Editor',
+            'Password',
+            'Percent',
+            'Rating',
+            // 'Read Only',
+            // 'Section Break',
+            // 'Select',
+            'Signature',
+            'Small Text',
+            // 'Table',
+            // 'Table MultiSelect',
+            'Text',
+            // 'Text Editor',
+            'Time',
+        ];
+    }
+
+    public static function getDbType()
+    {
+        return [
+            'Attach' => Schema::TYPE_STRING,
+            'Attach Image' => Schema::TYPE_STRING,
+            'Barcode' => Schema::TYPE_STRING,
+            // 'Button' => Schema::,
+            'Check' => Schema::TYPE_TINYINT,
+            'Code' => Schema::TYPE_STRING,
+            'Color' => Schema::TYPE_STRING,
+            // 'Column Break' => Schema::,
+            'Currency' => Schema::TYPE_MONEY,
+            'Data' => Schema::TYPE_STRING,
+            'Date' => Schema::TYPE_DATE,
+            'Datetime' => Schema::TYPE_DATETIME,
+            // 'Dynamic Link' => Schema::,
+            'Float' => Schema::TYPE_FLOAT,
+            // 'Fold' => Schema::,
+            'Geolocation' => Schema::TYPE_JSON,
+            'Heading' => Schema::TYPE_STRING,
+            'HTML' => Schema::TYPE_TEXT,
+            // 'HTML Editor' => Schema::,
+            'Image' => Schema::TYPE_STRING,
+            'Int' => Schema::TYPE_INTEGER,
+            'Link' => Schema::TYPE_STRING,
+            'Long Text' => Schema::TYPE_TEXT,
+            // 'Markdown Editor' => Schema::,
+            // 'Password' => Schema::,
+            // 'Percent' => Schema::,
+            // 'Rating' => Schema::,
+            'Read Only' => Schema::TYPE_BOOLEAN,
+            // 'Section Break' => Schema::,
+            // 'Select' => Schema::,
+            // 'Signature' => Schema::,
+            'Small Text' => Schema::TYPE_TEXT,
+            // 'Table' => Schema::,
+            // 'Table MultiSelect' => Schema::,
+            'Text' => Schema::TYPE_TEXT,
+            // 'Text Editor' => Schema::,
+            'Time' => Schema::TYPE_TIME,
+        ];
+    }
+
 }

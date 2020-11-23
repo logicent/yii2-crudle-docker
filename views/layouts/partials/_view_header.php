@@ -5,8 +5,8 @@ use yii\helpers\Inflector;
 use icms\FomanticUI\Elements;
 
 ?>
-<!--  style="margin-top: 38.4667px;" -->
-<header id="view_head" class="ui attached segment">
+
+<header id="view_head" class="ui attached segment" style="margin: 0">
     <div class="ui two column grid">
         <div class="ten wide column">
             <div class="ui floated header">

@@ -23,14 +23,20 @@ AppAsset::register($this);
 
     <header id="app_head">
     <?php
-        echo $this->context->renderPartial( '/layouts/partials/_main_navbar', ['context' => $this->context] );
-        if ($this->context->showViewHeader) :
-            echo $this->context->renderPartial( '/layouts/partials/_view_header', ['context' => $this->context] );
+        echo $this->context->renderPartial( '/layouts/partials/_main_navbar', [
+                'context' => $this->context
+            ] );
+        if ( $this->context->showViewHeader ) :
+            echo $this->context->renderPartial( '/layouts/partials/_view_header', [
+                'context' => $this->context
+            ] );
         endif ?>
     </header>
 
     <section id="app_body" class="ui basic segment">
-        <?php $this->context->renderPartial( '/layouts/partials/_flash_message', ['context' => $this->context] ) ?>
+        <?php $this->context->renderPartial( '/layouts/partials/_flash_message', [
+                'context' => $this->context
+            ] ) ?>
         <div class="ui stackable grid">
         <?php 
             // if ( $this->context->showViewSidebar ) :

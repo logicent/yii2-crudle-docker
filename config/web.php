@@ -1,6 +1,10 @@
 <?php
 /* @var codemix\yii2confload\Config $this */
 
+// $params = require __DIR__ . '/params.php';
+// $db = require __DIR__ . '/db.php';
+$url = require __DIR__ . '/url.php';
+
 // Prepare bootstrapped components and modules
 $bootstrap = ['log'];   // Must be 1st bootstrapped component
 $modules = [];
@@ -92,14 +96,11 @@ return [
             'savePath' => '@app/var/sessions',
             'timeout' => 1440,
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-        ],
+        'urlManager' => $url,
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
-            'loginUrl' => ['user/login'],
+            'loginUrl' => ['site/login'],
         ],
     ],
     'params' => [

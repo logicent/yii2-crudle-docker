@@ -73,9 +73,9 @@ class DocTypeController extends BaseController
     {
         $model = new DocType();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            // Save the fields
-
+        if ($model->load(Yii::$app->request->post()) && $model->save()) 
+        {
+            $model->createTable();
             return $this->redirect(['view', 'id' => $model->name]);
         }
 
@@ -100,7 +100,9 @@ class DocTypeController extends BaseController
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) 
+        {
+            $model->createTable();
             return $this->redirect(['view', 'id' => $model->name]);
         }
 

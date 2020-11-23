@@ -9,7 +9,6 @@ body {
     /* #ffffff #fff white hsl(0,0,100) rgb(255,255,255) */
     background-color: #ffffff;
     border-color: #ebeff2;
-    padding: 1em 0;
 }
 /* Alert / Notifications counters */
 /* #main_nav .ui.dropdown .menu > .item > .label {
@@ -37,4 +36,26 @@ body {
 .ui.accordion .active.title .angle.right.icon, .ui.accordion .accordion .active.title .angle.right.icon {
     -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
+}
+
+.ui.table {
+    border: 2px solid #dee5e7;
+    border-radius: 0.28571429rem;
+}
+
+.ui.table th a {
+    color: #8d99a6;
+    font-weight: 500;
+}
+
+.ui.table td, .ui.table td a {
+    color: #555;
+}
+
+.ui.modal > .content {
+    padding: 0;
+}
+
+.ui[class*="top attached"].segment {
+    margin-top: 0;
 }

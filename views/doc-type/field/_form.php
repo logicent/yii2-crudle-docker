@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use icms\FomanticUI\widgets\ActiveForm;
+use app\models\DocTypeField;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\DocTypeField */
@@ -25,7 +26,7 @@ echo $this->render('/layouts/_formModalHeader', ['model' => $model]) ?>
         <div class="column">
             <?= Html::activeHiddenInput( $model, 'doc_type' ) ?>
             <?= $form->field( $model, 'label' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
-            <?= $form->field( $model, 'type' )->dropDownList([]) ?>
+            <?= $form->field( $model, 'type' )->dropDownList(DocTypeField::getListOptions()) ?>
             <?= $form->field( $model, 'name' )->textInput(['maxlength' => true, 'readonly' => true]) ?>
 
             <?= $form->field( $model, 'mandatory' )->checkbox() ?>
@@ -37,11 +38,13 @@ echo $this->render('/layouts/_formModalHeader', ['model' => $model]) ?>
             <?= $form->field( $model, 'allow_in_quick_entry' )->checkbox() ?>
             <?= $form->field( $model, 'translatable' )->checkbox() ?>
             <?= $form->field( $model, 'mandatory_depends_on' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
-            <?= $form->field( $model, 'description' )->textArea(['rows' => 5, 'style' => 'height: 135px', 'readonly' => $isReadonly]) ?>
-            <?= $form->field( $model, 'in_filter' )->checkbox() ?>
-            <?= $form->field( $model, 'print_hide' )->checkbox() ?>
-            <?= $form->field( $model, 'print_width' )->textInput() ?>
-            <?= $form->field( $model, 'width' )->textInput() ?>            
+            <?= $form->field( $model, 'perm_level' )->textInput() ?>
+            <?= $form->field( $model, 'ignore_user_permissions' )->checkbox() ?>
+            <?= $form->field( $model, 'allow_on_submit' )->checkbox() ?>
+            <?= $form->field( $model, 'report_hide' )->checkbox() ?>
+            <?= $form->field( $model, 'hidden' )->checkbox() ?>
+            <?= $form->field( $model, 'readonly' )->checkbox() ?>
+            <?= $form->field( $model, 'readonly_depends_on' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
         </div>
         <div class="column">
             <?= $form->field( $model, 'default' )->textArea(['rows' => 5, 'style' => 'height: 112px', 'readonly' => $isReadonly]) ?>
@@ -56,13 +59,11 @@ echo $this->render('/layouts/_formModalHeader', ['model' => $model]) ?>
             <?= $form->field( $model, 'fetch_from' )->textInput() ?>
             <?= $form->field( $model, 'fetch_if_empty' )->checkbox() ?>
             <?= $form->field( $model, 'depends_on' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
-            <?= $form->field( $model, 'perm_level' )->textInput() ?>
-            <?= $form->field( $model, 'ignore_user_permissions' )->checkbox() ?>
-            <?= $form->field( $model, 'allow_on_submit' )->checkbox() ?>
-            <?= $form->field( $model, 'report_hide' )->checkbox() ?>
-            <?= $form->field( $model, 'hidden' )->checkbox() ?>
-            <?= $form->field( $model, 'readonly' )->checkbox() ?>
-            <?= $form->field( $model, 'readonly_depends_on' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
+            <?= $form->field( $model, 'description' )->textArea(['rows' => 5, 'style' => 'height: 135px', 'readonly' => $isReadonly]) ?>
+            <?= $form->field( $model, 'in_filter' )->checkbox() ?>
+            <?= $form->field( $model, 'print_hide' )->checkbox() ?>
+            <?= $form->field( $model, 'print_width' )->textInput() ?>
+            <?= $form->field( $model, 'width' )->textInput() ?>
         </div>
     </div>
 </div>

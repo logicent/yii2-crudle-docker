@@ -53,7 +53,7 @@ class DocTypeFieldController extends Controller
      */
     public function actionView($name, $doc_type)
     {
-        return $this->render('/doc-type/field/view', [
+        return $this->renderAjax('/doc-type/field/view', [
             'model' => $this->findModel($name, $doc_type),
         ]);
     }

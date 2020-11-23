@@ -61,6 +61,18 @@ use icms\FomanticUI\Elements;
             [
                 'class' => 'icms\FomanticUI\widgets\ActionColumn',
                 'buttons' => [
+                    'view' => function ( $url, $model, $key ) 
+                    {
+                        return 
+                            Html::a(Elements::icon('eye'), ['doc-type-field/view', 
+                                        'name' => $model->name, 
+                                        'doc_type' => $model->doc_type
+                                    ], 
+                                    [
+                                        'class' => 'ui button load-field-modal',
+                                        'title' => Yii::t('yii', 'View'),
+                                    ]);
+                    },                    
                     'update' => function ( $url, $model, $key ) 
                     {
                         return 

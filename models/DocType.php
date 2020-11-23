@@ -81,4 +81,17 @@ class DocType extends \yii\db\ActiveRecord
             'deleted_at' => Yii::t('app', 'Deleted At'),
         ];
     }
+
+    public function getDocTypeFields()
+    {
+        return $this->hasMany(DocTypeField::class, ['doc_type' => 'name']);
+    }
+
+    public function createTable()
+    {
+        foreach ($this->docTypeFields as $docTypeField)
+            $columns[$docTypeField->name] = DocTypeField::getDbType()[$docTypeField->type];
+        // $options = '';
+        $command = Yii::$app->db->createCommand()->createTable($this->name, $columns);
+    }
 }
