@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'View');
 
     <?= $this->render('_form', [
         'model' => $model,
-        'fieldSearchModel' => $fieldSearchModel,
         'fieldDataProvider' => $fieldDataProvider,        
     ]) ?>
 

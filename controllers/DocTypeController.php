@@ -3,13 +3,16 @@
 namespace app\controllers;
 
 use Yii;
+use yii\base\Model;
+use yii\data\ActiveDataProvider;
+use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
+use app\controllers\BaseController;
 use app\models\DocType;
 use app\models\DocTypeSearch;
 use app\models\DocTypeField;
 use app\models\DocTypeFieldSearch;
-use app\controllers\BaseController;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
+
 
 /**
  * DocTypeController implements the CRUD actions for DocType model.
@@ -54,12 +57,24 @@ class DocTypeController extends BaseController
      */
     public function actionView($id)
     {
-        $searchModel = new DocTypeFieldSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $model = $this->findModel($id);
+        $query = DocTypeField::find()->where(['doc_type' => $model->name]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    // 'created_at' => SORT_DESC,
+                    // 'title' => SORT_ASC,
+                ],
+            ],
+        ]);
 
         return $this->render('view', [
-            'model' => $this->findModel($id),
-            'fieldSearchModel' => $searchModel,
+            'model' => $model,
             'fieldDataProvider' => $dataProvider,            
         ]);
     }
@@ -72,19 +87,54 @@ class DocTypeController extends BaseController
     public function actionCreate()
     {
         $model = new DocType();
+        $modelDetails = [];
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) 
+        $formDetails = Yii::$app->request->post('DocTypeField', []);
+        foreach ($formDetails as $i => $formDetail) 
         {
-            $model->createTable();
-            return $this->redirect(['view', 'id' => $model->name]);
+            $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+            $modelDetail->setAttributes($formDetail);
+            $modelDetails[] = $modelDetail;
         }
 
-        $searchModel = new DocTypeFieldSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => DocTypeField::find()->where(['doc_type' => '']),
+        ]);
+
+        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE])] );
+
+        //handling if the addRow button has been pressed
+        if ( isset( Yii::$app->request->post()['addRow']) ) 
+        {
+            $model->load(Yii::$app->request->post());
+            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+            $dataProvider->setModels( $modelDetails );
+
+            return $this->render('create', [
+                'model' => $model,
+                'fieldDataProvider' => $dataProvider,
+            ]);
+        }
+
+        if ($model->load(Yii::$app->request->post())) 
+        {
+            if (Model::validateMultiple($modelDetails) && $model->validate()) 
+            {
+                if ( $model->save(false) ) 
+                {
+                    foreach($modelDetails as $modelDetail) 
+                    {
+                        $modelDetail->doc_type = $model->name;
+                        $modelDetail->save(false);
+                    }
+                    $model->createTable();
+                }
+                return $this->redirect(['view', 'id' => $model->name]);
+            }
+        }
 
         return $this->render('create', [
             'model' => $model,
-            'fieldSearchModel' => $searchModel,
             'fieldDataProvider' => $dataProvider,
         ]);
     }
@@ -99,19 +149,74 @@ class DocTypeController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $modelDetails = $model->docTypeFields;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) 
+        $formDetails = Yii::$app->request->post('DocTypeField', []);
+        foreach ($formDetails as $i => $formDetail) 
         {
-            $model->createTable();
-            return $this->redirect(['view', 'id' => $model->name]);
+            //loading the models if they are not new
+            if (isset($formDetail['name']) && isset($formDetail['updateType']) && $formDetail['updateType'] != DocTypeField::UPDATE_TYPE_CREATE) {
+                //making sure that it is actually a child of the main model
+                $modelDetail = DocTypeField::findOne(['name' => $formDetail['name'], 'doc_type' => $model->name]);
+                $modelDetail->setScenario(DocTypeField::SCENARIO_BATCH_UPDATE);
+                $modelDetail->setAttributes($formDetail);
+                $modelDetails[$i] = $modelDetail;
+                //validate here if the modelDetail loaded is valid, and if it can be updated or deleted
+            } else {
+                $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+                $modelDetail->setAttributes($formDetail);
+                $modelDetails[] = $modelDetail;
+            }
         }
 
-        $searchModel = new DocTypeFieldSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => DocTypeField::find()->where(['doc_type' => '']),
+        ]);
+
+        //handling if the addRow button has been pressed
+        if ( isset( Yii::$app->request->post()['addRow']) ) 
+        {
+            $model->load(Yii::$app->request->post());
+            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+            $dataProvider->setModels( $modelDetails );
+
+            return $this->render('update', [
+                'model' => $model,
+                'fieldDataProvider' => $dataProvider,
+            ]);
+        }
+
+        if ($model->load(Yii::$app->request->post())) 
+        {
+            if (Model::validateMultiple($modelDetails) && $model->validate()) 
+            {
+                if ( $model->save(false) ) 
+                {
+                    foreach($modelDetails as $modelDetail) 
+                    {
+                        //details that has been flagged for deletion will be deleted
+                        if ($modelDetail->updateType == DocTypeField::UPDATE_TYPE_DELETE) {
+                            $modelDetail->delete();
+                        } else {
+                            //new or updated records go here
+                            $modelDetail->doc_type = $model->name;
+                            $modelDetail->save(false);
+                        }                        
+                    }
+                    // $model->updateTable(); // TODO: define method in model
+                }
+                return $this->redirect(['view', 'id' => $model->name]);
+            }
+            else
+            {
+                Yii::$app->session->setFlash( 'error', $model->errors);
+            }
+        }
+
+        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE])] );
 
         return $this->render('update', [
             'model' => $model,
-            'fieldSearchModel' => $searchModel,
             'fieldDataProvider' => $dataProvider,
         ]);
     }

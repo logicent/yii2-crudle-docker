@@ -8,6 +8,7 @@ use app\models\DocTypeFieldSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * DocTypeFieldController implements the CRUD actions for DocTypeField model.
@@ -67,9 +68,18 @@ class DocTypeFieldController extends Controller
     {
         $model = new DocTypeField();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'name' => $model->name, 'doc_type' => $model->doc_type]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->asJson(['success' => true]);
+            } else {
+                $result = [];
+                foreach ($model->getErrors() as $attribute => $errors)
+                    $result[\yii\helpers\Html::getInputId($model, $attribute)] = $errors;
+                return $this->asJson(['validation' => $result]);
+            }
         }
+
+        $model->doc_type = Yii::$app->request->post('name');
 
         return $this->renderAjax('/doc-type/field/create', [
             'model' => $model,
@@ -84,14 +94,12 @@ class DocTypeFieldController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($name, $doc_type)
+    public function actionUpdate()
     {
-        $model = $this->findModel($name, $doc_type);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'name' => $model->name, 'doc_type' => $model->doc_type]);
-        }
-
+        $model = new DocTypeField();
+        $details = ArrayHelper::map(  Yii::$app->request->post('data'), 'name', 'value' );
+        $model->attributes = $details;
+        
         return $this->renderAjax('/doc-type/field/update', [
             'model' => $model,
         ]);
@@ -125,7 +133,7 @@ class DocTypeFieldController extends Controller
         if (($model = DocTypeField::findOne(['name' => $name, 'doc_type' => $doc_type])) !== null) {
             return $model;
         }
-
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        // else
+        return new DocTypeField();
     }
 }

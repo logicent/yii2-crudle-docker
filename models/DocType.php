@@ -84,14 +84,38 @@ class DocType extends \yii\db\ActiveRecord
 
     public function getDocTypeFields()
     {
-        return $this->hasMany(DocTypeField::class, ['doc_type' => 'name']);
+        return $this->hasMany(DocTypeField::class, [ 'doc_type' => 'name' ]);
     }
 
     public function createTable()
     {
-        foreach ($this->docTypeFields as $docTypeField)
+        $columns = [];
+        // \yii\helpers\VarDumper::dump($this->docTypeFields, 3, true);exit;
+        foreach ($this->docTypeFields as $docTypeField) {
             $columns[$docTypeField->name] = DocTypeField::getDbType()[$docTypeField->type];
+
+            if ( !empty($docTypeField->length) ) 
+                $columns[$docTypeField->name] .= '('. $docTypeField->length . ') ';
+
+            if ( (bool) $docTypeField->mandatory === true )
+                $columns[$docTypeField->name] .= DocTypeField::dbColumnAttributeConstraints()['mandatory'];
+
+            if ( (bool) $docTypeField->unique == true ) 
+                $columns[$docTypeField->name] .= DocTypeField::dbColumnAttributeConstraints()['unique'];
+                
+            if ( !empty($docTypeField->default ) ) 
+                $columns[$docTypeField->name] .= " DEFAULT " . " '" .$docTypeField->default . "' " ;
+        }       
         // $options = '';
-        $command = Yii::$app->db->createCommand()->createTable($this->name, $columns);
+        return Yii::$app->db->createCommand()->createTable($this->name, $columns)->execute();
     }
+
+    // public function alterTable()
+    // {
+    //     $columns = [];
+    //     foreach ($this->docTypeFields as $docTypeField)
+    //         $columns[$docTypeField->name] = DocTypeField::getDbType()[$docTypeField->type];
+    //     // $options = '';
+    //     return Yii::$app->db->createCommand()->createTable($this->name, $columns)->execute();
+    // }
 }

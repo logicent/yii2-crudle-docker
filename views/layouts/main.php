@@ -34,7 +34,7 @@ AppAsset::register($this);
     </header>
 
     <section id="app_body" class="ui basic segment">
-        <?php $this->context->renderPartial( '/layouts/partials/_flash_message', [
+        <?= $this->context->renderPartial( '/layouts/_flashMessage', [
                 'context' => $this->context
             ] ) ?>
         <div class="ui stackable grid">

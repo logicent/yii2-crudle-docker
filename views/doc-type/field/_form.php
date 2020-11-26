@@ -15,7 +15,10 @@ $form = ActiveForm::begin([
     'enableClientValidation' => true,
     'options' => [
         'autocomplete' => 'off',
-        'class' => 'ui form'
+        'class' => 'ui form modal-form',
+        'data' => [
+            'modal_id' => 'field_modal'
+        ]
     ],
 ]);
 
@@ -27,7 +30,7 @@ echo $this->render('/layouts/_formModalHeader', ['model' => $model]) ?>
             <?= Html::activeHiddenInput( $model, 'doc_type' ) ?>
             <?= $form->field( $model, 'label' )->textInput(['maxlength' => true, 'readonly' => $isReadonly]) ?>
             <?= $form->field( $model, 'type' )->dropDownList(DocTypeField::getListOptions()) ?>
-            <?= $form->field( $model, 'name' )->textInput(['maxlength' => true, 'readonly' => true]) ?>
+            <?= $form->field( $model, 'name' )->textInput(['maxlength' => true, 'readonly' => false]) ?>
 
             <?= $form->field( $model, 'mandatory' )->checkbox() ?>
             <?= $form->field( $model, 'unique' )->checkbox() ?>
@@ -68,5 +71,6 @@ echo $this->render('/layouts/_formModalHeader', ['model' => $model]) ?>
     </div>
 </div>
 
-<?php ActiveForm::end(); ?>
+<?php ActiveForm::end();
+$this->registerJs($this->render('/layouts/_formModal.js')) ?>
 

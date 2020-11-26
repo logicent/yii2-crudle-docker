@@ -11,7 +11,7 @@ $('.modal-form').on('beforeSubmit', function () {
             if (response.success) {
                 dialog.modal('hide');
                 // trigger auto refresh of grid
-                $('a.item.active')[0].click();
+                // $('a.item.active')[0].click();
             }
             else if (response.validation) {
                 console.log(response.validation);
@@ -20,7 +20,7 @@ $('.modal-form').on('beforeSubmit', function () {
             }
             else {
                 // incorrect server response
-                console.log('A server error was encountered');
+                console.log('A server error was encountered: ' + response);
             }
         })
         .fail(function () {

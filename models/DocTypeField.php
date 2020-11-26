@@ -42,6 +42,40 @@ use yii\db\Schema;
  */
 class DocTypeField extends \yii\db\ActiveRecord
 {
+    // const COLUMN_RENAME = 'rename';
+    // const COLUMN_ADD_UNIQUE = 'add_unique';
+    // const COLUMN_DROP_UNIQUE = 'drop_unique';
+    const COLUMN_CHANGE_TYPE = 'alter column';
+    // const COLUMN_RENAME = 'rename';
+
+    const UPDATE_TYPE_CREATE = 'create';
+    const UPDATE_TYPE_UPDATE = 'update';
+    const UPDATE_TYPE_DELETE = 'delete';
+
+    const SCENARIO_BATCH_UPDATE = 'batchUpdate';
+
+    public $changedDbColumn;
+
+    private $_updateType;
+
+    public function getUpdateType()
+    {
+        if (empty($this->_updateType)) {
+            if ($this->isNewRecord) {
+                $this->_updateType = self::UPDATE_TYPE_CREATE;
+            } else {
+                $this->_updateType = self::UPDATE_TYPE_UPDATE;
+            }
+        }
+
+        return $this->_updateType;
+    }
+
+    public function setUpdateType($value)
+    {
+        $this->_updateType = $value;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -56,6 +90,13 @@ class DocTypeField extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['updateType', 'required', 'on' => self::SCENARIO_BATCH_UPDATE],
+            ['updateType',
+                'in',
+                'range' => [self::UPDATE_TYPE_CREATE, self::UPDATE_TYPE_UPDATE, self::UPDATE_TYPE_DELETE],
+                'on' => self::SCENARIO_BATCH_UPDATE
+            ],
+            ['doc_type', 'required', 'except' => self::SCENARIO_BATCH_UPDATE],
             [['name', 'label', 'type', 'doc_type'], 'required'],
             [['length', 'mandatory', 'unique', 'in_list_view', 'in_standard_filter', 'in_global_search', 'bold', 'allow_in_quick_entry', 'translatable', 'fetch_from', 'fetch_if_empty', 'ignore_user_permissions', 'allow_on_submit', 'report_hide', 'perm_level', 'hidden', 'readonly', 'in_filter', 'print_hide', 'print_width', 'width'], 'integer'],
             [['options'], 'string'],
@@ -107,43 +148,43 @@ class DocTypeField extends \yii\db\ActiveRecord
     public static function getListOptions()
     {
         return [
-            'Attach',
-            'Attach Image',
-            'Barcode',
-            // 'Button',
-            'Check',
-            'Code',
-            'Color',
-            // 'Column Break',
-            'Currency',
-            // 'Data',
-            'Date',
-            'Datetime',
-            // 'Dynamic Link',
-            'Float',
-            // 'Fold',
-            'Geolocation',
-            'Heading',
-            'HTML',
-            // 'HTML Editor',
-            'Image',
-            'Int',
-            'Link',
-            'Long Text',
-            // 'Markdown Editor',
-            'Password',
-            'Percent',
-            'Rating',
-            // 'Read Only',
-            // 'Section Break',
-            // 'Select',
-            'Signature',
-            'Small Text',
-            // 'Table',
-            // 'Table MultiSelect',
-            'Text',
-            // 'Text Editor',
-            'Time',
+            'Attach' => 'Attach',
+            'Attach Image' => 'Attach Image',
+            'Barcode' => 'Barcode',
+            // 'Button' => // 'Button',
+            'Check' => 'Check',
+            'Code' => 'Code',
+            'Color' => 'Color',
+            // 'Column Break' => // 'Column Break',
+            'Currency' => 'Currency',
+            // 'Data' => // 'Data',
+            'Date' => 'Date',
+            'Datetime' => 'Datetime',
+            // 'Dynamic Link' => // 'Dynamic Link',
+            'Float' => 'Float',
+            // 'Fold' => // 'Fold',
+            'Geolocation' => 'Geolocation',
+            'Heading' => 'Heading',
+            'HTML' => 'HTML',
+            // 'HTML Editor' => // 'HTML Editor',
+            'Image' => 'Image',
+            'Int' => 'Int',
+            'Link' => 'Link',
+            'Long Text' => 'Long Text',
+            // 'Markdown Editor' => // 'Markdown Editor',
+            'Password' => 'Password',
+            'Percent' => 'Percent',
+            'Rating' => 'Rating',
+            // 'Read Only' => // 'Read Only',
+            // 'Section Break' => // 'Section Break',
+            // 'Select' => // 'Select',
+            'Signature' => 'Signature',
+            'Small Text' => 'Small Text',
+            // 'Table' => // 'Table',
+            // 'Table MultiSelect' => // 'Table MultiSelect',
+            'Text' => 'Text',
+            // 'Text Editor' => // 'Text Editor',
+            'Time' => 'Time',
         ];
     }
 
@@ -175,7 +216,7 @@ class DocTypeField extends \yii\db\ActiveRecord
             'Long Text' => Schema::TYPE_TEXT,
             // 'Markdown Editor' => Schema::,
             // 'Password' => Schema::,
-            // 'Percent' => Schema::,
+            'Percent' => Schema::TYPE_DOUBLE,
             // 'Rating' => Schema::,
             'Read Only' => Schema::TYPE_BOOLEAN,
             // 'Section Break' => Schema::,
@@ -187,6 +228,36 @@ class DocTypeField extends \yii\db\ActiveRecord
             'Text' => Schema::TYPE_TEXT,
             // 'Text Editor' => Schema::,
             'Time' => Schema::TYPE_TIME,
+        ];
+    }
+
+    // public function afterSave ( $insert, $changedAttributes ) {
+    //         \yii\helpers\VarDumper::dump($changedAttributes); exit;
+    //     if ( !$insert ) {
+    //         foreach ( $changedAttributes as $attribute) {
+    //             if ($attribute == 'type' ) 
+    //                 $this->changedDbColumn[$attribute] = self::COLUMN_CHANGE_TYPE;
+    //         }
+    //     }
+    //     return parent::afterSave($insert, $changedAttributes);
+    // }
+
+    public static function dbColumnAttributes () {
+        return [
+            // 'name',
+            'type',
+            'unique',
+            'mandatory',
+            'default',
+            'length'
+        ];
+    }
+
+    public static function dbColumnAttributeConstraints () {
+        return [
+            'primaryKey' => ' PRIMARY KEY',
+            'unique' => ' UNIQUE',
+            'mandatory' => ' NOT NULL',
         ];
     }
 

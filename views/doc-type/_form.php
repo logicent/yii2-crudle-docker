@@ -54,7 +54,8 @@ echo $this->render('/layouts/_formHeader', ['model' => $model]) ?>
 <div class="ui attached segment">
     <?= $this->render('field/index', [
             'dataProvider' => $fieldDataProvider, 
-            'searchModel' => $fieldSearchModel
+            'isReadonly' => $isReadonly,
+            'model' => $model,
         ]) ?>
 </div>
 <div class="ui attached segment">
