@@ -92,8 +92,9 @@ class DocTypeController extends BaseController
         $formDetails = Yii::$app->request->post('DocTypeField', []);
         foreach ($formDetails as $i => $formDetail) 
         {
-            $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
-            $modelDetail->setAttributes($formDetail);
+            $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION]);
+            $modelDetail->attributes = $formDetail;
+            $modelDetail->actionType = DocTypeField::ACTION_TYPE_CREATE;
             $modelDetails[] = $modelDetail;
         }
 
@@ -101,13 +102,13 @@ class DocTypeController extends BaseController
             'query' => DocTypeField::find()->where(['doc_type' => '']),
         ]);
 
-        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE])] );
+        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION])] );
 
         //handling if the addRow button has been pressed
         if ( isset( Yii::$app->request->post()['addRow']) ) 
         {
             $model->load(Yii::$app->request->post());
-            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION]);
             $dataProvider->setModels( $modelDetails );
 
             return $this->render('create', [
@@ -155,16 +156,18 @@ class DocTypeController extends BaseController
         foreach ($formDetails as $i => $formDetail) 
         {
             //loading the models if they are not new
-            if (isset($formDetail['name']) && isset($formDetail['updateType']) && $formDetail['updateType'] != DocTypeField::UPDATE_TYPE_CREATE) {
+            if (isset($formDetail['name']) && isset($formDetail['actionType']) && $formDetail['actionType'] != DocTypeField::ACTION_TYPE_CREATE) {
                 //making sure that it is actually a child of the main model
                 $modelDetail = DocTypeField::findOne(['name' => $formDetail['name'], 'doc_type' => $model->name]);
-                $modelDetail->setScenario(DocTypeField::SCENARIO_BATCH_UPDATE);
+                $modelDetail->setScenario(DocTypeField::SCENARIO_BATCH_ACTION);
                 $modelDetail->setAttributes($formDetail);
                 $modelDetails[$i] = $modelDetail;
                 //validate here if the modelDetail loaded is valid, and if it can be updated or deleted
-            } else {
-                $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
-                $modelDetail->setAttributes($formDetail);
+            } 
+            else {
+                $modelDetail = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION]);
+                $modelDetail->attributes = $formDetail;
+                $modelDetail->actionType = DocTypeField::ACTION_TYPE_CREATE;
                 $modelDetails[] = $modelDetail;
             }
         }
@@ -177,7 +180,7 @@ class DocTypeController extends BaseController
         if ( isset( Yii::$app->request->post()['addRow']) ) 
         {
             $model->load(Yii::$app->request->post());
-            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE]);
+            $modelDetails[] = new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION]);
             $dataProvider->setModels( $modelDetails );
 
             return $this->render('update', [
@@ -195,7 +198,7 @@ class DocTypeController extends BaseController
                     foreach($modelDetails as $modelDetail) 
                     {
                         //details that has been flagged for deletion will be deleted
-                        if ($modelDetail->updateType == DocTypeField::UPDATE_TYPE_DELETE) {
+                        if ($modelDetail->actionType == DocTypeField::ACTION_TYPE_DELETE) {
                             $modelDetail->delete();
                         } else {
                             //new or updated records go here
@@ -213,7 +216,7 @@ class DocTypeController extends BaseController
             }
         }
 
-        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_UPDATE])] );
+        $dataProvider->setModels( !empty($modelDetails) ? $modelDetails :  [new DocTypeField(['scenario' => DocTypeField::SCENARIO_BATCH_ACTION])] );
 
         return $this->render('update', [
             'model' => $model,

@@ -27,6 +27,7 @@ use app\models\DocTypeField;
         'emptyText' => Yii::t('app', "No fields defined."),
         'emptyTextOptions' => ['class' => 'ui small header center aligned text-muted'], 
         'columns' => [
+            ['class' => 'yii\grid\CheckboxColumn'],
             // ['class' => 'icms\FomanticUI\widgets\CheckboxColumn'],
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -69,8 +70,16 @@ use app\models\DocTypeField;
                 'format' => 'raw',
                 'value' => function( $model, $key, $index, $column ) {
                     return 
-                        Html::activeHiddenInput($model, "[$index]updateType",
-                            ['class' => 'update-type', 'data' => ['modal-input' => 'doc_type']] ) .
+                        Html::activeHiddenInput($model, "[$index]actionType",
+                            [
+                                'class' => 'action-type',
+                                'data' => [
+                                    'modal-input' => 'doc_type',
+                                    'action-create' => DocTypeField::ACTION_TYPE_CREATE,
+                                    'action-update' => DocTypeField::ACTION_TYPE_UPDATE,
+                                    'action-delete' => DocTypeField::ACTION_TYPE_DELETE,
+                                ]
+                            ] ) .
                         Html::activeHiddenInput($model, "[$index]doc_type", ['data' => ['modal-input' => 'doc_type']]) .
                         Html::activeHiddenInput($model, "[$index]length", ['data' => ['modal-input' => 'length']]) .
                         Html::activeHiddenInput($model, "[$index]unique", ['data' => ['modal-input' => 'unique']]) .
@@ -132,6 +141,9 @@ use app\models\DocTypeField;
                     [
                         'class' => 'delete-button ui mini red button', 
                         'style' => 'display:none',
+                        'data' => [
+                            ''
+                        ]
                     ]) .
                 Html::submitButton(Yii::t('app', 'Add row'), [
                     'class' => 'ui mini button',
@@ -182,19 +194,25 @@ $this->registerJs(<<<JS
     })
 JS); ?>
 
-<?php $this->registerJs("
-    $('.delete-button').click(function() {
-        var detail = $(this).closest('tr');
-        var updateType = detail.find('.update-type');
-        if (updateType.val() === " . json_encode(DocTypeField::UPDATE_TYPE_UPDATE) . ") {
-            //marking the row for deletion
-            updateType.val(" . json_encode(DocTypeField::UPDATE_TYPE_DELETE) . ");
-            detail.hide();
-        } else {
-            //if the row is a new row, delete the row
-            detail.remove();
-        }
+<?php $this->registerJs(<<<JS
+    $('.delete-button').click(
+        function()
+        {
+            var detail = $(this).closest('tr');
+            var actionType = detail.find('.action-type');
 
-    });
-");
+            if (actionType.val() ===  actionType.data('action-update') ) 
+            {
+                //marking the row for deletion
+                actionType.val( actionType.data('action-delete'));
+                detail.hide();
+            }
+            else
+             {
+                //if the row is a new row, delete the row
+                detail.remove();
+            }
+        }
+    );
+JS);
 ?>

@@ -48,32 +48,32 @@ class DocTypeField extends \yii\db\ActiveRecord
     const COLUMN_CHANGE_TYPE = 'alter column';
     // const COLUMN_RENAME = 'rename';
 
-    const UPDATE_TYPE_CREATE = 'create';
-    const UPDATE_TYPE_UPDATE = 'update';
-    const UPDATE_TYPE_DELETE = 'delete';
+    const ACTION_TYPE_CREATE = 'create';
+    const ACTION_TYPE_UPDATE = 'update';
+    const ACTION_TYPE_DELETE = 'delete';
 
-    const SCENARIO_BATCH_UPDATE = 'batchUpdate';
+    const SCENARIO_BATCH_ACTION = 'batchAction';
 
     public $changedDbColumn;
 
-    private $_updateType;
+    private $_actionType;
 
-    public function getUpdateType()
+    public function getActionType()
     {
-        if (empty($this->_updateType)) {
+        if (empty($this->_actionType)) {
             if ($this->isNewRecord) {
-                $this->_updateType = self::UPDATE_TYPE_CREATE;
+                $this->_actionType = self::ACTION_TYPE_CREATE;
             } else {
-                $this->_updateType = self::UPDATE_TYPE_UPDATE;
+                $this->_actionType = self::ACTION_TYPE_UPDATE;
             }
         }
 
-        return $this->_updateType;
+        return $this->_actionType;
     }
 
-    public function setUpdateType($value)
+    public function setActionType($value)
     {
-        $this->_updateType = $value;
+        $this->_actionType = $value;
     }
 
     /**
@@ -90,13 +90,13 @@ class DocTypeField extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['updateType', 'required', 'on' => self::SCENARIO_BATCH_UPDATE],
-            ['updateType',
+            ['actionType', 'required', 'on' => self::SCENARIO_BATCH_ACTION],
+            ['actionType',
                 'in',
-                'range' => [self::UPDATE_TYPE_CREATE, self::UPDATE_TYPE_UPDATE, self::UPDATE_TYPE_DELETE],
-                'on' => self::SCENARIO_BATCH_UPDATE
+                'range' => [self::ACTION_TYPE_CREATE, self::ACTION_TYPE_UPDATE, self::ACTION_TYPE_DELETE],
+                'on' => self::SCENARIO_BATCH_ACTION
             ],
-            ['doc_type', 'required', 'except' => self::SCENARIO_BATCH_UPDATE],
+            ['doc_type', 'required', 'except' => self::SCENARIO_BATCH_ACTION],
             [['name', 'label', 'type', 'doc_type'], 'required'],
             [['length', 'mandatory', 'unique', 'in_list_view', 'in_standard_filter', 'in_global_search', 'bold', 'allow_in_quick_entry', 'translatable', 'fetch_from', 'fetch_if_empty', 'ignore_user_permissions', 'allow_on_submit', 'report_hide', 'perm_level', 'hidden', 'readonly', 'in_filter', 'print_hide', 'print_width', 'width'], 'integer'],
             [['options'], 'string'],
@@ -143,6 +143,13 @@ class DocTypeField extends \yii\db\ActiveRecord
             'print_width' => Yii::t('app', 'Print Width'),
             'width' => Yii::t('app', 'Width'),
         ];
+    }
+
+    public function afterFind ()
+    {
+        $this->actionType = self::ACTION_TYPE_UPDATE;
+        $this->scenario = self::SCENARIO_BATCH_ACTION;
+        return parent::afterFind();
     }
 
     public static function getListOptions()
